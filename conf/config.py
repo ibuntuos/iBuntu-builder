@@ -3,9 +3,9 @@
 
 BASEWORKDIR='/home/ibuntubuilder'
 LIVEUSER='ibuntu'
-DISTNAME='iBuntu 2.0 Lix Nur BETA'
-CUSTOMISO='iBuntu_2B2.iso'
-LIVECDLABEL='iBuntu 2.0'
+DISTNAME='iBuntu 1.3 Catalinux'
+CUSTOMISO='ibuntu_1.3_catalinux_amd64.iso'
+LIVECDLABEL='iBuntu 1.3'
 LIVECDURL='https://ibuntuos.com'
 EXCLUDES=''
 SQUASHFSOPTS='-no-recovery -always-use-fragments -b 1M -no-duplicates -comp xz'

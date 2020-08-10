@@ -10,6 +10,6 @@ sudo apt install python3-tk python3-pip isolinux casper syslinux-utils syslinux 
 pip3 install pysimplegui
 pip3 install python-resize-image
 sudo pip3 install pysimplegui
-sudo pip3 install python-resize-image
+#sudo pip3 install python-resize-image
 read -p "Press any key to reload iBuntu Builder" x
 sudo $BASEDIR/ibuntu_builder.py

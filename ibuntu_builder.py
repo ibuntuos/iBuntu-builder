@@ -25,7 +25,7 @@ def isobutton(pathtoiso):
         buttoncolorISO='#66e0ff'
     print(buttoncolorISO)
     return buttoncolorISO
-
+        
 def writestuff():
 		#write config to .conf file for bashscript
 		filepath = os.path.join(WorkPath,'conf/config.py')
@@ -41,11 +41,11 @@ def resize_splash(splash, splashcropped):
 		cover = resizeimage.resize_cover(image, [100, 75])
 		cover.save(splashcropped, image.format)
 
-konsolecommand="gnome-terminal"
+konsolecommand="gnome-terminal --"
 print(desk_environment.detect_desktop_environment())
 #set konsole command according to system
-if not desk_environment.detect_desktop_environment() == "gnome":
-	konsolecommand="konsole"
+#if not desk_environment.detect_desktop_environment() == "gnome":
+#	konsolecommand="konsole -e"
 
 print(konsolecommand)
 WorkPath=os.path.dirname(os.path.realpath(__file__))
@@ -147,7 +147,8 @@ while True:
         LIVECDURL=values['URL']
         writestuff()
         window.Element('ISO').Update(disabled=True, button_color=('black','#eeece9'))
-        os.system(konsolecommand+" -e '/bin/bash "+WorkPath+"/ibuntubuilder'")
+        print(konsolecommand+" "+WorkPath+"/ibuntubuilder'")
+        os.system(konsolecommand+" '"+WorkPath+"/ibuntubuilder'")
         window.Element('ISO').Update(disabled=False, button_color=('black','#86de96'))
         buttoncolorISO=isobutton(pathtoiso)
         window.Element('USB').Update(button_color=('black',buttoncolorISO), disabled=bool(not os.path.exists(pathtoiso)))
@@ -165,8 +166,12 @@ while True:
 
     if event == 'USB':
         os.system(WorkPath+"/conf/balenaEtcher-1.5.101-x64.AppImage ibuntu.iso")
-
+    
 
     if event == sg.WIN_CLOSED:		   # always,  always give a way out!
         os.remove(splashcropped)
         break
+
+
+
+
