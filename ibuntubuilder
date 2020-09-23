@@ -57,10 +57,10 @@ EXCLUDESFILE="${SCRIPTDIR}/excludes"
 
 echo $SCRIPTDIR" 2"
 #################
-# OUTPUT # the output is formatted in a special way in order to be parsed by the python script - do not change !! § is the split character
+# OUTPUT # the output is formatted in a special way in order to be parsed by the python script - do not change !! ยง is the split character
 ##########################
 output() {
-    echo "OUTPUT: $1 § $2"
+    echo "OUTPUT: $1 ยง $2"
 }
 
 dependence (){
@@ -893,16 +893,11 @@ OPT1="dist"
       find /usr/lib/ -name 'isohdpfx.bin' -exec cp -f {} ${WORKDIR}/ISOTMP/isolinux/ \;
       find /usr/lib/ -name 'isolinux.bin' -exec cp -f {} ${WORKDIR}/ISOTMP/isolinux/ \;
       #find fix for vesamenu.32 provided by Krasimir S. Stefanov <lokiisyourmaster@gmail.com>
-      if [ "${UBUVERSION}" -le 14 ] ; then
-        VESAMENU=`find /usr/lib/ -name "vesamenu.c32" | grep "syslinux/vesamenu.c32"`
-        cp ${VESAMENU} ${WORKDIR}/ISOTMP/isolinux/
-      elif [ "${UBUVERSION}" -gt 14 ] ; then
-        # Copy the c32 files into isolinux ##### TEST
-        c32files=`find /usr/lib/ -name "*.c32" | grep "/bios/"`
+      c32files=`find /usr/lib/ -name "*.c32" | grep "/bios/"`
         for c in ${c32files} ; do
           cp ${c} ${WORKDIR}/ISOTMP/isolinux/
         done
-      fi
+        log_msg "c32 files were copied to /ISOTMP/isolinux"
       # setup isolinux for the livecd
       sed -e 's/__DISTNAME__/'"${DISTNAME}"'/g' /etc/ibuntubuilder/isolinux/isolinux.cfg.vesamenu > ${WORKDIR}/ISOTMP/isolinux/isolinux.cfg
       cp /etc/ibuntubuilder/isolinux/splash.png ${WORKDIR}/ISOTMP/isolinux/splash.png
