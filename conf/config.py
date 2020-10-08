@@ -3,8 +3,8 @@
 
 BASEWORKDIR='/home/ibuntubuilder'
 LIVEUSER='ibuntu'
-DISTNAME='iBuntu 2.0 Lix Nur BETA'
-CUSTOMISO='iBuntu_2B2.iso'
+DISTNAME='iBuntu 2.0 Lix Sur BETA'
+CUSTOMISO='iBuntu_2B7.iso'
 LIVECDLABEL='iBuntu 2.0'
 LIVECDURL='https://ibuntuos.com'
 EXCLUDES=''

@@ -72,8 +72,8 @@ sleep2
     #apt-get -y -o Dpkg::Options::=--force-confnew dist-upgrade
     apt-get -y -o Dpkg::Options::=--force-confnew install isolinux
     apt-get -y -o Dpkg::Options::=--force-confnew install casper
-    #apt-get -y -o Dpkg::Options::=--force-confnew install calamares
-    #apt-get -y -o Dpkg::Options::=--force-confnew install calamares-settings
+    #apt-get -y -o Dpkg::Options::=--force-confnew install ubiquity
+    #apt-get -y -o Dpkg::Options::=--force-confnew install ubiquity-settings
     apt-get -y -o Dpkg::Options::=--force-confnew install syslinux-utils
     apt-get -y -o Dpkg::Options::=--force-confnew install syslinux
     apt-get -y -o Dpkg::Options::=--force-confnew install syslinux-common
@@ -1023,8 +1023,8 @@ FOO
       find /usr/share/applications -name 'ubiquity.desktop' -execdir mv -v '{}' ubiquity.desktop_ORIG \; >>${WORKDIR}/ibuntubuilder.log
       chmod 644 /usr/share/applications/ubiquity.desktop_ORIG
       # remove any UBIQUITY that's all CAPS
-      if [ -e /usr/share/applications/UBIQUITY.desktop* ] ; then
-        yes | rm -vf /usr/share/applications/UBIQUITY.desktop* | ${tee_log}
+      if [ -e /usr/share/applications/ubiquity.desktop* ] ; then
+        yes | rm -vf /usr/share/applications/ubiquity.desktop* | ${tee_log}
       fi
       echo "- copy custom ubiquity.desktop into applications dir" >>${WORKDIR}/ibuntubuilder.log
       cp -vf /etc/ibuntubuilder/ubiquity/ubiquity.desktop /usr/share/applications/ubiquity.desktop >>${WORKDIR}/ibuntubuilder.log
@@ -1262,7 +1262,7 @@ FOO
   #  2018-03-27 - added "/swapfile" to exclusions as per kamwoods
   case ${OPT1} in
     backup )
-      squashcmd="mksquashfs ${REALFOLDERS} ${WORKDIR}/ISOTMP/casper/filesystem.squashfs ${SQUASHFSOPTS} -e /root/.local/Trash /root/.thumbnails /root/.cache /root/.bash_history /root/.lesshst /root/.nano_history /boot/grub /usr/share/applications/ibuntubuilder-gtk.desktop /swapfile ${BASEWORKDIR} ${EXCLUDEICONS} ${EXCLUDELOCALES} ${EXCLUDES} 2>>${WORKDIR}/ibuntubuilder.log"
+      squashcmd="mksquashfs ${REALFOLDERS} ${WORKDIR}/ISOTMP/casper/filesystem.squashfs ${SQUASHFSOPTS} -e /root/.local/Trash /root/.thumbnails /root/.cache /root/.bash_history /root/.lesshst /root/.nano_history /boot/grub /usr/share/applications/ibuntubuilder-gtk.desktop /swapfile /timeshift ${BASEWORKDIR} ${EXCLUDEICONS} ${EXCLUDELOCALES} ${EXCLUDES} 2>>${WORKDIR}/ibuntubuilder.log"
     ;;
     * )
       squashcmd="mksquashfs ${REALFOLDERS} ${WORKDIR}/ISOTMP/casper/filesystem.squashfs ${SQUASHFSOPTS} -e /root/.local/Trash /root/.thumbnails /root/.dbus /root/.wget-hsts /root/.bash_history /root/.lesshst /root/.nano_history /boot/grub /usr/share/applications/ibuntubuilder-gtk.desktop /swapfile ${BASEWORKDIR} ${EXCLUDEICONS} ${EXCLUDELOCALES} ${EXCLUDES} 2>>${WORKDIR}/ibuntubuilder.log"
