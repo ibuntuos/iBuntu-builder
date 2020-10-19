@@ -11,7 +11,7 @@ if not desk_environment.detect_desktop_environment() == "gnome":
 result = os.system("python3 "+WorkPath+"/conf/guicheck.py")
 if 0 == result:
     print("all good")
-    os.system(konsolecommand+" -e "+os.path.join(WorkPath, "run.sh")) 	
+    os.system(konsolecommand+" -e "+os.path.join(WorkPath, "run.sh")) 		
 else:
     print("Error occured, try to install missing dependencies")
     os.system(konsolecommand+" -e 'python3 "+os.path.join(WorkPath, "dependencies.sh'"))

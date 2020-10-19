@@ -72,25 +72,17 @@ sleep2
     #apt-get -y -o Dpkg::Options::=--force-confnew dist-upgrade
     apt-get -y -o Dpkg::Options::=--force-confnew install isolinux
     apt-get -y -o Dpkg::Options::=--force-confnew install casper
-    #apt-get -y -o Dpkg::Options::=--force-confnew install ubiquity
-    #apt-get -y -o Dpkg::Options::=--force-confnew install ubiquity-settings
+    #apt-get -y -o Dpkg::Options::=--force-confnew install calamares
+    #apt-get -y -o Dpkg::Options::=--force-confnew install calamares-settings
     apt-get -y -o Dpkg::Options::=--force-confnew install syslinux-utils
     apt-get -y -o Dpkg::Options::=--force-confnew install syslinux
     apt-get -y -o Dpkg::Options::=--force-confnew install syslinux-common
     apt-get -y -o Dpkg::Options::=--force-confnew install archdetect-deb
-    apt-get -y-o Dpkg::Options::=--force-confnew install casper
-    apt-get -y -o Dpkg::Options::=--force-confnew install ubiquity
-    apt-get -y -o Dpkg::Options::=--force-confnew install ubiquity-frontend-gtk
-    apt-get -y -o Dpkg::Options::=--force-confnew install ubiquity-slideshow-kubuntu
-    apt-get -y -o Dpkg::Options::=--force-confnew install ubiquity-casper
+    apt-get -y install calamares
     apt-get -y -o Dpkg::Options::=--force-confnew install mbr
     apt-get -y -o Dpkg::Options::=--force-confnew install dpkg-dev
+    apt-get -y -o Dpkg::Options::=--force-confnew install grub-efi-amd64
 
-    
-    #Remove pre-installed ubiquity-slideshow and replace it with iBuntu-Default
-    rm -R /usr/share/ubiquity-slideshow
-    cp -R $SCRIPTDIR/conf/ubiquity-slideshow /usr/share
-    sleep 5
 }
 
 ###install dependencies
@@ -110,10 +102,14 @@ echo
 rm -R $BASEWORKDIR
 mkdir $BASEWORKDIR
 
+
 echo $SCRIPTDIR" 4"
 #Copy Skel-Stuff to /etc/skel
 sh "$SCRIPTDIR/conf/skelcreate.sh"
 sleep 5
+
+
+
 echo "test 1"
 #Copy important stuff to /etc/ibuntubuilder
 rm -R /etc/ibuntubuilder
@@ -224,18 +220,6 @@ if [ "${BACKUPSHOWINSTALL}" = "0" -o "${BACKUPSHOWINSTALL}" = "1" ] ; then
 else
     echo "BACKUPSHOWINSTALL incorrect, using default of 1" >>${WORKDIR}/ibuntubuilder.log
     BACKUPSHOWINSTALL="1"
-fi
-
-
-# Check to see if there is a slideshow for Ubiquity
-#   v 2.18.x is having permission problems on install if there is no
-#   slideshow for ubiquity.
-slideshow_present=`dpkg --get-selections | grep 'slideshow'`
-if [ ! "${slideshow_present}" ] ; then
-  ibuntu_slideshow_present=`dpkg --get-selections | grep 'ibuntu-slideshow'`
-  if [ ! "${ibuntu_slideshow_present}" ] ; then
-    log_msg "No slideshow installed for ubiquity"
-  fi
 fi
 
 
@@ -356,7 +340,10 @@ cdfs (){
   log_msg "Removing unnecessary packages, and cleaning up the system."
       rm -rf /opt/teamviewer/config/global.conf
       apt-get clean
-  
+      log_msg "Apply branding and setup for calamares installer..."
+    # you may change the installer behaviour and the branding on your own.. it's quite easy
+    sudo cp -a ${SCRIPTDIR}/conf/calamares /etc
+    sleep 1
   log_msg "Enabling ibuntubuilder-firstboot"
   cp -f /etc/ibuntubuilder/firstboot/file-firstboot /etc/init.d/ibuntubuilder-firstboot
   sed -i 's/__DISTNAME__/'"${DISTNAME}"'/g' /etc/init.d/ibuntubuilder-firstboot
@@ -375,66 +362,6 @@ cdfs (){
   log_msg "Making sure popularity contest is not installed"
   apt-get -y -q remove popularity-contest &> /dev/null
   
-  # check whether system is kde based or other to load the correct ubiquity frontend
-  #   NOTE: May need to change this check to look for one of these env vars instead:
-  #         $XDG_CURRENT_DESKTOP  -or-  $DESKTOP_SESSION
-  #   NOTE: For now, just to avoid problems, just install the gtk frontend (kde code commented out)
-
-  # first, save a currently present ubiquity.desktop so we can restore it after installing ubiquity-frontend-gtk
-  if [ -e /usr/share/applications/ubiquity.desktop ] ; then
-    yes | mv -v /usr/share/applications/ubiquity.desktop /usr/share/applications/ubiquity.desktop_TEMP | ${tee_log}
-  fi
-  
-
-  #
-  #~ if [ "`ps axf | grep startkde | grep -v grep`" != "" -o "`ps axf | grep kwin | grep -v grep`" != "" ] ; then
-  #~ if [ "`ps axf | grep -o -m1 startkde`" != "" -o "`ps axf | grep -o -m1 kwin`" != "" ] ; then
-  #~ if [ "`echo $XDG_CURRENT_DESKTOP`" == "KDE" ] ; then
-      #~ log_msg "Installing the Ubiquity KDE frontend"
-      #~ apt-get -y -q remove ubiquity-frontend-kde &> /dev/null
-      #~ apt-get -y -q install ubiquity-frontend-kde &> /dev/null
-      #~ apt-get -y -q remove ubiquity-frontend-gtk &> /dev/null
-      #~ chmod +x /usr/share/applications/kde4/ubiquity-kdeui.desktop &> /dev/null
-      #~ sed -i "s/ubiquity kde_ui/pkexec ubiquity kde_ui/" /usr/share/applications/kde4/ubiquity-kdeui.desktop
-  #~ else
-      log_msg "Installing the Ubiquity GTK frontend"
-      ubiquity_frontend_gtk_status=`dpkg --get-selections | grep ubiquity-frontend-gtk`
-      if [ "${ubiquity_frontend_gtk_status}" ] ; then
-        #~ apt-get -y -q remove ubiquity-frontend-gtk &> /dev/null
-        apt-get -y -q remove ubiquity-frontend-gtk &>> ${WORKDIR}/ibuntubuilder.log
-        sleep 1
-      else
-        echo "ubiquity-frontend-gtk not initially installed" >> ${WORKDIR}/ibuntubuilder.log
-      fi
-      # install ubiquity-frontend-gtk regardless
-      #~ apt-get -y -q install ubiquity-frontend-gtk &> /dev/null
-      apt-get -y -q install ubiquity-frontend-gtk &>> ${WORKDIR}/ibuntubuilder.log
-      sleep 1
-      ubiquity_frontend_kde_status=`dpkg --get-selections | grep ubiquity-frontend-kde`
-      if [ "${ubiquity_frontend_kde_status}" ] ; then
-        #~ apt-get -y -q remove ubiquity-frontend-kde &> /dev/null
-        apt-get -y -q remove ubiquity-frontend-kde &>> ${WORKDIR}/ibuntubuilder.log
-        sleep 1
-      else
-        echo "ubiquity-frontend-kde not initially installed" >> ${WORKDIR}/ibuntubuilder.log
-      fi
-      # double-check for ubiquity-frontend-gtk installation
-      # cuz if it's not installed ubiquity won't work
-      ubiquity_frontend_gtk_status=`dpkg --get-selections | grep ubiquity-frontend-gtk`
-      if [ ! "${ubiquity_frontend_gtk_status}" ] ; then
-        #~ apt-get -y -q install ubiquity-frontend-gtk &> /dev/null
-        apt-get -y -q install ubiquity-frontend-gtk &>> ${WORKDIR}/ibuntubuilder.log
-        sleep 1
-      else
-        echo "ubiquity-frontend-gtk installed -- re-check" >> ${WORKDIR}/ibuntubuilder.log
-      fi
-  #~ fi
-
-  # now, restore a ubiquity.desktop if it was saved before installing ubiquity-frontend-gtk
-  if [ -e /usr/share/applications/ubiquity.desktop_TEMP ] ; then
-    yes | mv -v /usr/share/applications/ubiquity.desktop_TEMP /usr/share/applications/ubiquity.desktop | ${tee_log}
-  fi
-
 
   # Check and log the display manager in use:
   currentdm_path="`cat /etc/X11/default-display-manager`"
@@ -860,22 +787,7 @@ OPT1="dist"
     fi
   fi
 
-  # Creating a repository for the Ubiquity install
-  #  Note: in order for this to work correctly, the source system
-  #        must be completely upgraded, as in 'apt-get dist-upgrade'
-  log_msg "Creating a Packages.gz repository for the Ubiquity install"
-  # kamwoods - "dists" dir not being created in ISOTMP on some spins
-  if [ -e "${WORKDIR}/ISOTMP/dists" ] ; then
-    rm -f ${WORKDIR}/ISOTMP/dists/Packages.gz | ${tee_log}
-  else
-    mkdir ${WORKDIR}/ISOTMP/dists
-  fi
-  # Creating Packages.gz so the repo is valid
-  log_msg "Creating ${WORKDIR}/ISOTMP/dists/Packages.gz"
-  cd ${WORKDIR}/ISOTMP/dists/
-  dpkg-scanpackages pool /dev/null 2>>${WORKDIR}/ibuntubuilder.log | gzip -9c > ./Packages.gz
-  cd -
-
+  
   #copy any preseed files
   log_msg "Copying any preseed files"
   cp /etc/ibuntubuilder/preseed/* ${WORKDIR}/ISOTMP/preseed/
@@ -981,65 +893,51 @@ FOO
       else
           log_msg "LIVEUSER set as  '${LIVEUSER}'"
       fi
-
+      
+      
+      log_msg "Copying the calamares install icon to the desktop of ${LIVEUSER}"
       LIVEHOME=`grep ${LIVEUSER} /etc/passwd | awk -F ":" '{print $6}'`
-      if [ "${BACKUPSHOWINSTALL}" = "1" ] ; then
-          # copy the install icon to the sudo users desktop
-          #  NOTE -- on a backup spin, the ubiquity icon on the Desktop may differ from the ubiquity
-          #          icon in the menus because we don't replace the ubiquity in
-          #          /usr/share/applications/, we just leave that as-is.
-          #          If I get some requests, I may also replace the latter ubiquity as well.
-          log_msg "Copying the ubiquity install icon to the desktop of ${LIVEUSER}"
-          if [ -e /etc/ibuntubuilder/ubiquity/ubiquity.desktop ] ; then
-            UBIQUITYDESKTOP="/etc/ibuntubuilder/ubiquity/ubiquity.desktop"
-          fi
-          if [ ! "${UBIQUITYDESKTOP}" ] ; then
-            UBIQUITYDESKTOP=`find /usr/share/applications -name 'ubiquity*.desktop' | head -1`
-            if [ ! "${UBIQUITYDESKTOP}" ] ; then
-                UBIQUITYDESKTOP=`find /usr -name 'ubiquity*.desktop' | head -1`
-            fi
-          fi
-          if [ "${UBIQUITYDESKTOP}" ] ; then
-              install -d -o ${LIVEUSER} -g ${LIVEUSER} /${LIVEHOME}/Desktop &> /dev/null
-              install -D -o ${LIVEUSER} -g ${LIVEUSER} ${UBIQUITYDESKTOP} /${LIVEHOME}/Desktop/ &> /dev/null
-              sed -i "s/RELEASE/${LIVECDLABEL}/" "/${LIVEHOME}/Desktop/`basename ${UBIQUITYDESKTOP}`" &> /dev/null
-              #~ sed -i "s/_LIVE_CD_LABEL_/${LIVECDLABEL}/" "/${LIVEHOME}/Desktop/`basename ${UBIQUITYDESKTOP}`" &> /dev/null
-              chmod +x "/${LIVEHOME}/Desktop/`basename ${UBIQUITYDESKTOP}`"
-              # set ubiquity.desktop as trusted
-              sudo -i -u ${LIVEUSER} dbus-run-session -- gio set "/${LIVEHOME}/Desktop/`basename ${UBIQUITYDESKTOP}`" metadata::trusted yes
-              echo "ubiquity command:  `grep -i exec= ${UBIQUITYDESKTOP}`" >>${WORKDIR}/ibuntubuilder.log
-          else
-              echo "could not find a ubiquity.desktop to put on the Desktop" >>${WORKDIR}/ibuntubuilder.log
-          fi
-      fi
+      UBIQUITYDESKTOP="/etc/ibuntubuilder/ubiquity/calamares.desktop"
+      install -d -o ${LIVEUSER} -g ${LIVEUSER} /${LIVEHOME}/Desktop &> /dev/null
+      mkdir /etc/skel/Desktop
+      cp ${UBIQUITYDESKTOP} /etc/skel/Desktop/
+      sed -i "s/RELEASE/${LIVECDLABEL}/" "/${LIVEHOME}/Desktop/`basename ${UBIQUITYDESKTOP}`" &> /dev/null
+      
+     
+
   elif [ "${OPT1}" = "dist" ] ; then
 
-      # copy over bb's ubiquity.desktop to the host system with the custom name 'Install ${LIVECDLABEL}'
-      log_msg "copying over ibuntubuilder's ubiquity.desktop to the host system with the custom name 'Install ${LIVECDLABEL}'"
-      log_msg "- All available ubiquity files in /usr/share/applications/"
-      ls -l /usr/share/applications/UBIQUITY* >>${WORKDIR}/ibuntubuilder.log
-      ls -l /usr/share/applications/ubiquity* >>${WORKDIR}/ibuntubuilder.log
-      log_msg "- rename original ubiquity.desktop to ubiquity.desktop_ORIG"
-      find /usr/share/applications -name 'ubiquity.desktop' -execdir mv -v '{}' ubiquity.desktop_ORIG \; >>${WORKDIR}/ibuntubuilder.log
-      chmod 644 /usr/share/applications/ubiquity.desktop_ORIG
+      # copy over bb's calamares.desktop to the host system with the custom name 'Install ${LIVECDLABEL}'
+      log_msg "copying over ibuntubuilder's calamares.desktop to the host system with the custom name 'Install ${LIVECDLABEL}'"
+      log_msg "- All available calamares files in /usr/share/applications/"
+      ls -l /usr/share/applications/calamares* >>${WORKDIR}/ibuntubuilder.log
+      log_msg "- rename original calamares.desktop to calamares.desktop_ORIG"
+      find /usr/share/applications -name 'calamares.desktop' -execdir mv -v '{}' calamares.desktop_ORIG \; >>${WORKDIR}/ibuntubuilder.log
+      chmod 644 /usr/share/applications/calamares.desktop_ORIG
       # remove any UBIQUITY that's all CAPS
-      if [ -e /usr/share/applications/ubiquity.desktop* ] ; then
-        yes | rm -vf /usr/share/applications/ubiquity.desktop* | ${tee_log}
+      if [ -e /usr/share/applications/calamares.desktop* ] ; then
+        yes | rm -vf /usr/share/applications/calamares.desktop* | ${tee_log}
       fi
-      echo "- copy custom ubiquity.desktop into applications dir" >>${WORKDIR}/ibuntubuilder.log
-      cp -vf /etc/ibuntubuilder/ubiquity/ubiquity.desktop /usr/share/applications/ubiquity.desktop >>${WORKDIR}/ibuntubuilder.log
+      echo "- copy custom calamares.desktop into applications dir" >>${WORKDIR}/ibuntubuilder.log
+      cp -vf /etc/ibuntubuilder/ubiquity/calamares.desktop /usr/share/applications/calamares.desktop >>${WORKDIR}/ibuntubuilder.log
       echo "- set custom name to 'Install ${LIVECDLABEL}'" >>${WORKDIR}/ibuntubuilder.log
-      sed -i "s/_LIVE_CD_LABEL_/${LIVECDLABEL}/" /usr/share/applications/ubiquity.desktop &> /dev/null
+      sed -i "s/_LIVE_CD_LABEL_/${LIVECDLABEL}/" /usr/share/applications/calamares.desktop &> /dev/null
+      
+       log_msg "Copying the calamares install icon to the desktop of ${LIVEUSER}"
+      LIVEHOME=`grep ${LIVEUSER} /etc/passwd | awk -F ":" '{print $6}'`
+      UBIQUITYDESKTOP="/etc/ibuntubuilder/ubiquity/calamares.desktop"
+      install -d -o ${LIVEUSER} -g ${LIVEUSER} /${LIVEHOME}/Desktop &> /dev/null
+      mkdir /etc/skel/Desktop
+      cp ${UBIQUITYDESKTOP} /etc/skel/Desktop/
+      sed -i "s/RELEASE/${LIVECDLABEL}/" "/${LIVEHOME}/Desktop/`basename ${UBIQUITYDESKTOP}`" &> /dev/null
+      
   fi # end $OPT1 = backup or dist
 
-  
-  #Enable Autostart of Ubiquity
-  cp ${SCRIPTDIR}/conf/startbk.sh ${DUMMYSYSHOMEUSERDIR}/Documents/start.sh
-  sed -i '/Recent Files/c\Recent Files[$e]=start.sh,file:$HOME/Documents/start.sh' ${HOMEOLDER}/.config/systemsettingsrc
   
   # If lightdm has an autologin-user in lightdm.conf, change it to ${LIVEUSER}
   #   LIVEUSER may have been changed above if doing a backup mode
   # !!! this needs work !!!
+  currentdm = "lightdm"
   if [ "${currentdm}" == "lightdm" ] ; then
     log_msg "dist mode -- found lightdm, LIVEUSER is  ${LIVEUSER}"
     if [ -f "${WORKDIR}/dummysys/etc/lightdm/lightdm.conf" ] ; then
@@ -1087,49 +985,9 @@ export FLAVOUR="${LIVEUSER}"
 FOO
   cp /etc/casper.conf ${WORKDIR}/dummysys/etc/
 
-  sleep 1
-
-
-  # if the mode is dist then re-number the uid's for any user with a uid greater than 1000
-  # and make the passwdrestore file so the uid's are restored before the script finishes
-  # if this is not done, the livecd user will not be created properly
-  log_msg "Checking and setting user-setup-apply for the live system"
-
-  case ${OPT1} in
-    dist )
-      # make sure user-setup-apply is present in case backup mode was last used
-      if [ -f /usr/lib/ubiquity/user-setup/user-setup-apply.orig ] ; then
-          cp /usr/lib/ubiquity/user-setup/user-setup-apply.orig /usr/lib/ubiquity/user-setup/user-setup-apply
-      fi
-    ;;
-    * )
-      # since this is backup mode, prevent user-setup-apply from running during install
-      if [ ! -f /usr/lib/ubiquity/user-setup/user-setup-apply.orig ] ; then
-          mv /usr/lib/ubiquity/user-setup/user-setup-apply /usr/lib/ubiquity/user-setup/user-setup-apply.orig
-      fi
-      echo "exit 0"> /usr/lib/ubiquity/user-setup/user-setup-apply
-      chmod 755 /usr/lib/ubiquity/user-setup/user-setup-apply
-    ;;
-  esac
-
 
   sleep 1
 
-
-  # Set the desired apt-setup commands for ubiquity
-  log_msg "Setting up casper and ubiquity options for ${OPT1} mode"
-  
-  log_msg "Tweaking apt-setup"
-  
-  # create a backup of the original apt-setup
-  if [ ! -f "/usr/share/ubiquity/apt-setup.0RIG" ] ; then
-      cp -f /usr/share/ubiquity/apt-setup /usr/share/ubiquity/apt-setup.0RIG
-  fi
-  rm -f /usr/share/ubiquity/apt-setup &> /dev/null
-  #~ cp -f /etc/ibuntubuilder/ubiquity/apt-setup.bb /usr/share/ubiquity/
-  cp -f /etc/ibuntubuilder/ubiquity/apt-setup.* /usr/share/ubiquity/
-  cp -f /etc/ibuntubuilder/ubiquity/apt-setup.bb /usr/share/ubiquity/apt-setup # pre-configured apt-setup for ibuntubuilder
-  chmod 755 /usr/share/ubiquity/apt-setup
 
 
   # make a new initial ramdisk including the casper scripts
@@ -1262,7 +1120,7 @@ FOO
   #  2018-03-27 - added "/swapfile" to exclusions as per kamwoods
   case ${OPT1} in
     backup )
-      squashcmd="mksquashfs ${REALFOLDERS} ${WORKDIR}/ISOTMP/casper/filesystem.squashfs ${SQUASHFSOPTS} -e /root/.local/Trash /root/.thumbnails /root/.cache /root/.bash_history /root/.lesshst /root/.nano_history /boot/grub /usr/share/applications/ibuntubuilder-gtk.desktop /swapfile /timeshift ${BASEWORKDIR} ${EXCLUDEICONS} ${EXCLUDELOCALES} ${EXCLUDES} 2>>${WORKDIR}/ibuntubuilder.log"
+      squashcmd="mksquashfs ${REALFOLDERS} ${WORKDIR}/ISOTMP/casper/filesystem.squashfs ${SQUASHFSOPTS} -e /root/.local/Trash /root/.thumbnails /root/.cache /root/.bash_history /root/.lesshst /root/.nano_history /boot/grub /usr/share/applications/ibuntubuilder-gtk.desktop /swapfile ${BASEWORKDIR} ${EXCLUDEICONS} ${EXCLUDELOCALES} ${EXCLUDES} 2>>${WORKDIR}/ibuntubuilder.log"
     ;;
     * )
       squashcmd="mksquashfs ${REALFOLDERS} ${WORKDIR}/ISOTMP/casper/filesystem.squashfs ${SQUASHFSOPTS} -e /root/.local/Trash /root/.thumbnails /root/.dbus /root/.wget-hsts /root/.bash_history /root/.lesshst /root/.nano_history /boot/grub /usr/share/applications/ibuntubuilder-gtk.desktop /swapfile ${BASEWORKDIR} ${EXCLUDEICONS} ${EXCLUDELOCALES} ${EXCLUDES} 2>>${WORKDIR}/ibuntubuilder.log"
@@ -1328,7 +1186,7 @@ FOO
 
   if [ "${OPT1}" = "backup" ] ; then
       log_msg "Cleaning up the install icon from the user desktops"
-      rm -rf /home/*/Desktop/ubiquity*.desktop &> /dev/null
+      rm -rf /home/*/Desktop/calamares.desktop &> /dev/null
   fi
 
 
@@ -1346,14 +1204,6 @@ FOO
   update-rc.d -f ibuntubuilder-firstboot remove
   chmod 644 /etc/init.d/ibuntubuilder-firstboot
 
-  # restore ubiquity.desktop
-  if  [ "${OPT1}" = "dist" ] ; then
-    if [ -e /usr/share/applications/ubiquity.desktop_ORIG ] ; then
-      log_msg "restoring ubiquity.desktop on the host system"
-      mv -f /usr/share/applications/ubiquity.desktop /usr/share/applications/ubiquity.desktop_BB
-      mv -f /usr/share/applications/ubiquity.desktop_ORIG /usr/share/applications/ubiquity.desktop
-    fi
-  fi
 }
 ##### END function cdfs #####
 
@@ -1570,10 +1420,6 @@ iso (){
       exit 1
   fi
 
-  log_msg "Copying apt-setup back to original"
-  if [ -f "/usr/share/ubiquity/apt-setup.0RIG" ] ; then
-      cp -f /usr/share/ubiquity/apt-setup.0RIG /usr/share/ubiquity/apt-setup
-  fi
 
   # Make the iso hybrid so it can be simply dd copied to a usb flash drive.
   case ${CREATEISO} in

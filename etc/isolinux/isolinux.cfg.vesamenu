@@ -11,7 +11,7 @@ menu color hotsel 1;32;40 #ff4da435 #ff000000 none
 label live
   menu label Try and Install __DISTNAME__
   kernel /casper/vmlinuz
-  append  noprompt file=/cdrom/preseed/custom.seed boot=casper initrd=/casper/initrd.lz quiet splash --
+  append  noprompt file=/cdrom/preseed/custom.seed boot=casper initrd=/casper/initrd.lz fsck.mode=skip quiet splash --
 
 label memtest
   menu label Run memtest

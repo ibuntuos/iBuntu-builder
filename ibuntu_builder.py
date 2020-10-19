@@ -73,11 +73,6 @@ Tab1col1= [[sg.Text('')],
 	[sg.Frame('', frame_Splash), sg.Text("Splash")]]
 
 Tab1col2= [[sg.Text('')],
-	[sg.Text('')],
-	[sg.Text('')],
-	[sg.Text('')],
-    [sg.Text('')],
-	[sg.Text('')],
 	[sg.Text('Distribution Name')],
 	[sg.T('')],
 	[sg.Text('Distribution Fullname')]]
@@ -132,7 +127,7 @@ layout = [[sg.TabGroup([[sg.Tab('iBuntu OS', tab1_layout), sg.Tab('Advanced', ta
 
 
 
-window = sg.Window('iBuntu Builder 1.0', layout, icon=winicon, default_element_size=(12,1))
+window = sg.Window('iBuntu Builder 1.1', layout, icon=winicon, default_element_size=(12,1))
 
 while True:
     event, values = window.read()
@@ -164,7 +159,7 @@ while True:
         break
 
     if event == 'USB':
-        os.system(WorkPath+"/conf/balenaEtcher-1.5.101-x64.AppImage ibuntu.iso")
+        os.system(WorkPath+"/etc/balena_etcher/balenaEtcher-1.5.101-x64.AppImage ibuntu.iso")
 
 
     if event == sg.WIN_CLOSED:		   # always,  always give a way out!
