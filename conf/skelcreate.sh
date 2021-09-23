@@ -72,7 +72,7 @@ echo "sudo rm /etc/skel/.config/user-dirs.*"
 sudo rm /etc/skel/.config/user-dirs.*
 echo "sudo rm /etc/skel/.config/monitors.*"
 sudo rm /etc/skel/.config/monitors.*
-sudp rm /etc/skel/.config/google-chrome
+sudo rm /etc/skel/.config/google-chrome
 echo "### Make Desktop-File for Installer ###"
 #
 #
