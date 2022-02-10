@@ -1,0 +1,32 @@
+# (c)2022-02-09
+# Release: 1.4 Alpha 1
+# 
+# Release Notes:
+# All Updates included for Ubuntu 18.04.6
+# Removed Stacer because not necessarry anymore
+# Removed LibreOffice - if you need it just install it
+# Removed Evolution - who needs an E-Mail Client in 2022?
+# - again: If you want one, get one.
+# Standard Theme now is from MacOS: Big Sur
+#############################################################
+
+To install iBuntu 1.4 Catalinux:
+
+* Open the Launchpad
+* Select Install iBuntu 1.4 Catalinux
+* Follow the instructions
+
+
+Minor Issues:
+
+* After the Installer is done you manually have to reboot
+* After the first boot of the sytem you need to enter your 
+  Username manually. Only on first boot. You will survive it.
+
+
+Have fun.
+
+
+BOfH
+https://ibuntuos.com
+##############################################################

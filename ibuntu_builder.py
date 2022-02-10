@@ -44,8 +44,8 @@ def resize_splash(splash, splashcropped):
 konsolecommand="gnome-terminal"
 print(desk_environment.detect_desktop_environment())
 #set konsole command according to system
-if not desk_environment.detect_desktop_environment() == "gnome":
-	konsolecommand="konsole"
+#if not desk_environment.detect_desktop_environment() == "gnome":
+#	konsolecommand="konsole"
 
 print(konsolecommand)
 WorkPath=os.path.dirname(os.path.realpath(__file__))
@@ -64,7 +64,7 @@ frame_Splash = [
 
 Tab1col1= [[sg.Text('')],
 	[sg.Button('Create ISO', size=(28,2), button_color=('black','#86de96'), key="ISO")],
-	[sg.Button('Burn bootable ISO', size=(28,2), button_color=('black',buttoncolorISO), key="USB", disabled=bool(not os.path.exists(pathtoiso)))],
+	[sg.Button('Copy ISO', size=(28,2), button_color=('black',buttoncolorISO), key="USB", disabled=bool(not os.path.exists(pathtoiso)))],
     [sg.Text('')],
 	[sg.InputText(LIVECDLABEL, size=(32,2), key="Label")],
 	[sg.T('')],
@@ -127,7 +127,7 @@ layout = [[sg.TabGroup([[sg.Tab('iBuntu OS', tab1_layout), sg.Tab('Advanced', ta
 
 
 
-window = sg.Window('iBuntu Builder 1.1', layout, icon=winicon, default_element_size=(12,1))
+window = sg.Window('iBuntu Builder 1.2', layout, icon=winicon, default_element_size=(12,1))
 
 while True:
     event, values = window.read()
@@ -159,8 +159,14 @@ while True:
         break
 
     if event == 'USB':
-        os.system(WorkPath+"/etc/balena_etcher/balenaEtcher-1.5.101-x64.AppImage ibuntu.iso")
-
+        #os.system(WorkPath+"/etc/balena_etcher/balenaEtcher-1.5.101-x64.AppImage ibuntu.iso")
+        print("###########################")
+        print("Copy ISO to Host System")
+        print("cp "+pathtoiso+" /mnt/hgfs/Desktop")
+        print("please wait...")
+        os.system("cp "+pathtoiso+" /mnt/hgfs/Desktop")
+        print("done!")
+        print("###########################")
 
     if event == sg.WIN_CLOSED:		   # always,  always give a way out!
         os.remove(splashcropped)

@@ -2,13 +2,13 @@
 componentName: ibuntu
 
 strings:
-    productName:         iBuntu Lix Sur
+    productName:         iBuntu Catalinux
     shortProductName:    iBuntu OS
-    version:             2.0
-    shortVersion:        focal
-    versionedName:       iBuntu Lix Sur
-    shortVersionedName:  iBuntu Lix Sur
-    bootloaderEntryName: iBuntu Lix Sur
+    version:             1.4
+    shortVersion:        Catalinux
+    versionedName:       iBuntu Catalinux
+    shortVersionedName:  iBuntu Catalinux
+    bootloaderEntryName: iBuntu Catalinux
     productUrl:          https://ibuntuos.com/
     supportUrl:          https://ibuntuos.com/
     knownIssuesUrl:      https://ibuntuos.com/

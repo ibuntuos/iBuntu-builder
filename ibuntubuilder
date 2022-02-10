@@ -4,7 +4,7 @@
 # Modified to ibuntubuilder from remastersys.
 #
 # For use on iBuntu OS 1.3 and up
-# 
+#
 # Forged out of Bodhibuilder and merged with some code of life-builder
 # All based on the old remastersys script
 #
@@ -78,10 +78,10 @@ sleep2
     apt-get -y -o Dpkg::Options::=--force-confnew install syslinux
     apt-get -y -o Dpkg::Options::=--force-confnew install syslinux-common
     apt-get -y -o Dpkg::Options::=--force-confnew install archdetect-deb
-    apt-get -y install calamares
+ #   apt-get -y install calamares
     apt-get -y -o Dpkg::Options::=--force-confnew install mbr
     apt-get -y -o Dpkg::Options::=--force-confnew install dpkg-dev
-    apt-get -y -o Dpkg::Options::=--force-confnew install grub-efi-amd64
+    apt-get -y -o Dpkg::Options::=--force-confnew install grub-efi-amd64.
 
 }
 
@@ -97,15 +97,94 @@ if [[( $BASEWORKDIR = "" ) || ( $LIVEUSER = "" ) || ( $DISTNAME = "" ) || ( $CUS
     output "At least one important setting is missing!" "0"
     exit 0
 fi
-echo 
+echo
 #Initialize Workdirs
 rm -R $BASEWORKDIR
+rm -R /etc/calamares/
+rm /usr/share/applications/calamares.desktop
+
 mkdir $BASEWORKDIR
 
 
 echo $SCRIPTDIR" 4"
 #Copy Skel-Stuff to /etc/skel
-sh "$SCRIPTDIR/conf/skelcreate.sh"
+echo "###############Clean whole System#############"
+sudo apt -f install &&
+sudo apt -y autoremove &&
+sudo apt -y autoclean &&
+sudo apt -y clean &&
+sudo aptitude purge
+echo ""
+echo "########Clean Temp-Files of local user########"
+echo "sudo rm -rf /tmp/*"
+sudo rm -rf /tmp/*
+echo "sudo rm -rf /var/logs/*"
+sudo rm -rf /var/logs/*
+echo "sudo rm -rf /var/tmp/*"
+sudo rm -rf /var/tmp/*
+echo "rm -rf ~/.thumbs/*"
+rm -rf ~/.thumbs/*
+echo "sudo rm -rf ~/.cache/*"
+sudo rm -rf ~/.cache/*
+# rm -rf ~/.xbmc/addons/packages
+echo "rm -rf ~/.local/share/Trash/files/*"
+rm -rf ~/.local/share/Trash/files/*
+echo "rm -rf .gvfs"
+rm -rf .gvfs
+echo "rm -rf .local/share/gvfs-metadata"
+rm -rf .local/share/gvfs-metadata
+echo "rm -rf .locl/share/Trash"
+rm -rf .local/share/Trash/
+echo "echo '' > ~/.bash_history"
+echo "" > ~/.bash_history
+echo "history -c"
+history -c
+echo ""
+echo "###############Clean /etc/skel################"
+echo "sudo rm -rf /etc/skel/.??*"
+sudo rm -rf /etc/skel/.??*
+echo "sudo rm -rf /etc/skel/*"
+sudo rm -rf /etc/skel/*
+echo ""
+echo "########Copy relevant data to /etc/skel#######"
+echo "sudo cp -r /home/$LIVEUSER/.config /etc/skel"
+sudo cp -r /home/$LIVEUSER/.config /etc/skel
+echo "sudo cp -r /home/$LIVEUSER/.local /etc/skel"
+sudo cp -r /home/$LIVEUSER/.local /etc/skel
+echo "sudo cp -r /home/$LIVEUSER/.kde /etc/skel"
+sudo cp -r /home/$LIVEUSER/.kde /etc/skel
+#sudo cp -r /home/$LIVEUSER/.gconf /etc/skel
+#sudo cp -r /home/$LIVEUSER/.gnome2 /etc/skel
+#sudo cp -r /home/$LIVEUSER/.mplayer /etc/skel
+echo "sudo cp /home/$LIVEUSER/.bashrc /etc/skel"
+sudo cp /home/$LIVEUSER/.bashrc /etc/skel
+echo "sudo cp /home/$LIVEUSER/.profile /etc/skel"
+sudo cp /home/$LIVEUSER/.profile /etc/skel
+#sudo cp /home/$LIVEUSER/.face /etc/skel
+#sudo cp -r /home/$LIVEUSER/.dockbarx /etc/skel
+sudo cp -r /home/$LIVEUSER/.easystroke /etc/skel
+sudo cp -r /home/$LIVEUSER/.xscreensaver /etc/skel
+sudo cp -r /home/$LIVEUSER/.sudo_as_admin_successful /etc/skel
+sudo cp -r /home/$LIVEUSER/.Xauthority /etc/skel
+#sudo cp -r /home/$LIVEUSER/.mozilla /etc/skel
+#echo "sudo cp -r /home/$LIVEUSER/.themes /etc/skel"
+#sudo cp -r /home/$LIVEUSER/.themes /etc/skel
+#echo "sudo cp -r /home/$LIVEUSER/.icons /etc/skel"
+#sudo cp -r /home/$LIVEUSER/.icons /etc/skel
+#sudo cp -r /home/$LIVEUSER/Escritorio /etc/skel
+#sudo cp -r /home/$LIVEUSER/Desktop /etc/skel
+echo "sudo cp -r /home/$LIVEUSER/snap /etc/skel"
+sudo cp -r /home/$LIVEUSER/snap /etc/skel
+echo "sudo rm /etc/skel/.config/user-dirs.*"
+sudo rm /etc/skel/.config/user-dirs.*
+echo "sudo rm /etc/skel/.config/monitors.*"
+sudo rm /etc/skel/.config/monitors.*
+sudo rm /etc/skel/.config/google.*
+echo "### Make Desktop-File for Installer ###"
+mkdir /etc/skel/Desktop
+      cp ${SCRIPTDIR}/conf/HowToInstall.txt /etc/skel/Desktop/
+sudo chown -R 1000:1001 /etc/skel
+sudo chown  root:root /etc/skel
 sleep 5
 
 
@@ -249,7 +328,7 @@ fi
 
 
 # check for UID and/or GID 990 being already used on a dist build
-# we need these ID's 
+# we need these ID's
 if [ "${OPT1}" == "dist" ] ; then
   # check for uid 990 & associated username
   uid_990_check=`id 990 | grep -o 'uid=990'`
@@ -343,6 +422,7 @@ cdfs (){
       log_msg "Apply branding and setup for calamares installer..."
     # you may change the installer behaviour and the branding on your own.. it's quite easy
     sudo cp -a ${SCRIPTDIR}/conf/calamares /etc
+    sudo chmod 777 -R /etc/calamares
     sleep 1
   log_msg "Enabling ibuntubuilder-firstboot"
   cp -f /etc/ibuntubuilder/firstboot/file-firstboot /etc/init.d/ibuntubuilder-firstboot
@@ -350,18 +430,18 @@ cdfs (){
   sed -i 's/__LIVECDLABEL__/'"${LIVECDLABEL}"'/g' /etc/init.d/ibuntubuilder-firstboot
   chmod 755 /etc/init.d/ibuntubuilder-firstboot
   update-rc.d ibuntubuilder-firstboot defaults
-  
+
   log_msg "Checking filesystem type of the Working Folder"
   DIRTYPE=`df -T -P ${WORKDIR} | grep "^\/dev" | awk '{print $2}'`
   log_msg "${WORKDIR} is on a ${DIRTYPE} filesystem"
 
   #Changing caspers user-uid
   sed -i -e 's@user-uid [0-9]*@user-uid 990@' /usr/share/initramfs-tools/scripts/casper-bottom/*adduser
-  
+
   #removing popularity-contest as it causes a problem when installing with ubiquity
   log_msg "Making sure popularity contest is not installed"
   apt-get -y -q remove popularity-contest &> /dev/null
-  
+
 
   # Check and log the display manager in use:
   currentdm_path="`cat /etc/X11/default-display-manager`"
@@ -377,7 +457,7 @@ cdfs (){
 
   sleep 1
 
-  
+
   # Step 3 - Creation of the CD tree in ${WORKDIR}/{ISOTMP,dummysys}
   log_msg "Checking if the ${WORKDIR} folder has been created"
   if [ -d "${WORKDIR}/dummysys" ] ; then
@@ -696,7 +776,7 @@ OPT1="dist"
     log_msg "  downloading latest deb files for ${ARCH} packages:"
     log_msg "${dlpkg_all}"
     # create temp directory in ${WORKDIR}/ ..... now working in ${WORKDIR}/dlpkgtempdir/ while downloading debs
-    cd ${WORKDIR} && mkdir dlpkgtempdir && cd dlpkgtempdir 
+    cd ${WORKDIR} && mkdir dlpkgtempdir && cd dlpkgtempdir
 
     # download pkgs
     apt-get download ${dlpkg_all} | ${tee_log}
@@ -732,7 +812,7 @@ OPT1="dist"
   #~ # Option to stop the ISO creation if the system has not been dist-upgraded
   #~ #   1= warning message & stop creation | 0= just keep going | anythingelse= just keep going
   #~ NOUPGRADE_STOP_ISO="0"
-  #~  
+  #~
   #~ # Check to see if the system as been dist-upgrade'd
   #~ if [ "${NOUPGRADE_STOP_ISO}" == "1" ] ; then
     #~ needs_dist_upgrade="`apt-get dist-upgrade --assume-no | grep 'The following packages will be upgraded'`"
@@ -787,7 +867,7 @@ OPT1="dist"
     fi
   fi
 
-  
+
   #copy any preseed files
   log_msg "Copying any preseed files"
   cp /etc/ibuntubuilder/preseed/* ${WORKDIR}/ISOTMP/preseed/
@@ -893,17 +973,18 @@ FOO
       else
           log_msg "LIVEUSER set as  '${LIVEUSER}'"
       fi
-      
-      
+
+
       log_msg "Copying the calamares install icon to the desktop of ${LIVEUSER}"
       LIVEHOME=`grep ${LIVEUSER} /etc/passwd | awk -F ":" '{print $6}'`
       UBIQUITYDESKTOP="/etc/ibuntubuilder/ubiquity/calamares.desktop"
-      install -d -o ${LIVEUSER} -g ${LIVEUSER} /${LIVEHOME}/Desktop &> /dev/null
-      mkdir /etc/skel/Desktop
-      cp ${UBIQUITYDESKTOP} /etc/skel/Desktop/
-      sed -i "s/RELEASE/${LIVECDLABEL}/" "/${LIVEHOME}/Desktop/`basename ${UBIQUITYDESKTOP}`" &> /dev/null
-      
-     
+    #  install -d -o ${LIVEUSER} -g ${LIVEUSER} /${LIVEHOME}/Desktop &> /dev/null
+      #mkdir /etc/skel/Desktop
+      #cp ${UBIQUITYDESKTOP} /etc/skel/Desktop/
+      #sed -i "s/RELEASE/${LIVECDLABEL}/" "/${LIVEHOME}/Desktop/`basename ${UBIQUITYDESKTOP}`" &> /dev/null
+      #chmod +x /etc/skel/Desktop/calamares.desktop
+
+
 
   elif [ "${OPT1}" = "dist" ] ; then
 
@@ -922,18 +1003,19 @@ FOO
       cp -vf /etc/ibuntubuilder/ubiquity/calamares.desktop /usr/share/applications/calamares.desktop >>${WORKDIR}/ibuntubuilder.log
       echo "- set custom name to 'Install ${LIVECDLABEL}'" >>${WORKDIR}/ibuntubuilder.log
       sed -i "s/_LIVE_CD_LABEL_/${LIVECDLABEL}/" /usr/share/applications/calamares.desktop &> /dev/null
-      
+
        log_msg "Copying the calamares install icon to the desktop of ${LIVEUSER}"
       LIVEHOME=`grep ${LIVEUSER} /etc/passwd | awk -F ":" '{print $6}'`
       UBIQUITYDESKTOP="/etc/ibuntubuilder/ubiquity/calamares.desktop"
-      install -d -o ${LIVEUSER} -g ${LIVEUSER} /${LIVEHOME}/Desktop &> /dev/null
-      mkdir /etc/skel/Desktop
-      cp ${UBIQUITYDESKTOP} /etc/skel/Desktop/
-      sed -i "s/RELEASE/${LIVECDLABEL}/" "/${LIVEHOME}/Desktop/`basename ${UBIQUITYDESKTOP}`" &> /dev/null
-      
+      #install -d -o ${LIVEUSER} -g ${LIVEUSER} /${LIVEHOME}/Desktop &> /dev/null
+      #mkdir /etc/skel/Desktop
+      #cp ${UBIQUITYDESKTOP} /etc/skel/Desktop/
+      #sed -i "s/RELEASE/${LIVECDLABEL}/" "/${LIVEHOME}/Desktop/`basename ${UBIQUITYDESKTOP}`" &> /dev/null
+      #chmod +x /etc/skel/Desktop/calamares.desktop
+
   fi # end $OPT1 = backup or dist
 
-  
+
   # If lightdm has an autologin-user in lightdm.conf, change it to ${LIVEUSER}
   #   LIVEUSER may have been changed above if doing a backup mode
   # !!! this needs work !!!
@@ -1184,10 +1266,10 @@ FOO
 
   # cleanup the install icons as they aren't needed on the current system
 
-  if [ "${OPT1}" = "backup" ] ; then
-      log_msg "Cleaning up the install icon from the user desktops"
-      rm -rf /home/*/Desktop/calamares.desktop &> /dev/null
-  fi
+  #if [ "${OPT1}" = "backup" ] ; then
+  #    log_msg "Cleaning up the install icon from the user desktops"
+  #    rm -rf /home/*/Desktop/calamares.desktop &> /dev/null
+  #fi
 
 
   sleep 1
@@ -1359,7 +1441,7 @@ iso (){
 
   ## Now actually create the ISO
   case ${CREATEISO} in
-      *xorriso* ) # 
+      *xorriso* ) #
           # xorriso
           #   - Can boot to ISO in either UEFI or non-UEFI mode when dd'd to a USB, CD or DVD
           #   - Copy direct to CD or DVD using command:  sudo xorrecord dev=/dev/sr0 speed=12 fs=8m blank=as_needed -eject padsize=300k file.iso
@@ -1407,7 +1489,7 @@ iso (){
             ;;
           esac
       ;;
-      *genisoimage|*mkisofs ) # 
+      *genisoimage|*mkisofs ) #
           log_msg "creating ISO with ${ISOCMD}"
           # create the ISO
           ${CREATEISO} -iso-level 3 -quiet -r -V "${LIVECDLABEL}" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ${WORKDIR}/${CUSTOMISO} "${WORKDIR}/ISOTMP" 2>>${WORKDIR}/ibuntubuilder.log 1>>${WORKDIR}/ibuntubuilder.log

@@ -24,7 +24,9 @@ do_start() {
             # Remove ubiquity icon from desktop
             yes | rm -rf /home/*/Desktop/ubiquity*.desktop
             yes | rm -rf /home/*/Desktop/UBIQUITY*.desktop
-            yes | rm -rf /usr/share/applications/UBIQUITY.desktop
+            yes | rm -rf /home/*/Desktop/calamares.desktop
+            yes | rm -rf /usr/share/applications/calamares.desktop
+            yes | rm -rf //home/*/Desktop/HowToInstall.txt
             # Remove ubiquity from menus
             sed -i -e 's/NoDisplay=false/NoDisplay=true/' /usr/share/applications/ubiquity.desktop
             sed -i -e 's/Hidden=false/Hidden=true/' /usr/share/applications/ubiquity.desktop
