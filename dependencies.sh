@@ -11,12 +11,12 @@ pip3 install pysimplegui
 pip3 install python-resize-image
 sudo pip3 install pysimplegui
 sudo pip3 install python-resize-image
-curl -SsL  https://pieroproietti.github.io/penguins-eggs-ppa/KEY.gpg | gpg --dearmor | sudo tee /usr/share/keyrings/penguins-eggs-ppa-keyring.gpg
-sudo curl -s --compressed -o /etc/apt/sources.list.d/penguins-eggs-ppa.list "https://pieroproietti.github.io/penguins-eggs-ppa/penguins-eggs-ppa.list"
+#curl -SsL  https://pieroproietti.github.io/penguins-eggs-ppa/KEY.gpg | gpg --dearmor | sudo tee /usr/share/keyrings/penguins-eggs-ppa-keyring.gpg
+#sudo curl -s --compressed -o /etc/apt/sources.list.d/penguins-eggs-ppa.list "https://pieroproietti.github.io/penguins-eggs-ppa/penguins-eggs-ppa.list"
 sudo apt update
-sudo apt install eggs -y
-sudo eggs calamares --install
-sudo apt remove eggs -y
-sudo apt autoremove
+#sudo apt install eggs -y
+#sudo eggs calamares --install
+#sudo apt remove eggs -y
+#sudo apt autoremove
 read -p "Press any key to reload iBuntu Builder" x
 sudo $BASEDIR/ibuntu_builder.py

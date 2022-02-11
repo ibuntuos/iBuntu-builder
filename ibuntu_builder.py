@@ -127,7 +127,7 @@ layout = [[sg.TabGroup([[sg.Tab('iBuntu OS', tab1_layout), sg.Tab('Advanced', ta
 
 
 
-window = sg.Window('iBuntu Builder 1.2', layout, icon=winicon, default_element_size=(12,1))
+window = sg.Window('iBuntu Builder 1.2.1', layout, icon=winicon, default_element_size=(12,1))
 
 while True:
     event, values = window.read()

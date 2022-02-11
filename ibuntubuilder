@@ -72,8 +72,8 @@ sleep2
     #apt-get -y -o Dpkg::Options::=--force-confnew dist-upgrade
     apt-get -y -o Dpkg::Options::=--force-confnew install isolinux
     apt-get -y -o Dpkg::Options::=--force-confnew install casper
-    #apt-get -y -o Dpkg::Options::=--force-confnew install calamares
-    #apt-get -y -o Dpkg::Options::=--force-confnew install calamares-settings
+    apt-get -y -o Dpkg::Options::=--force-confnew install calamares
+    apt-get -y -o Dpkg::Options::=--force-confnew install calamares-settings
     apt-get -y -o Dpkg::Options::=--force-confnew install syslinux-utils
     apt-get -y -o Dpkg::Options::=--force-confnew install syslinux
     apt-get -y -o Dpkg::Options::=--force-confnew install syslinux-common
