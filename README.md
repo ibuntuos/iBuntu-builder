@@ -1,6 +1,8 @@
 # iBuntu-builder
 ```
-Update 2023: Since 2021 this builder is outdated and was last used for the Creation of iBuntu 2.0 It will be discontinued and archived since we switched to a process with the Help of Penguin's Eggs in imd 2022.
+Update 2023: Since 2021 this builder is outdated and was last used for the Creation of iBuntu 2.0 
+It will be discontinued and archived since we switched to a process 
+with the Help of Penguin's Eggs in mid 2022.
 ```
 
 ```
